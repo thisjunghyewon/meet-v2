@@ -17,6 +17,7 @@ const NumberOfEvents = ({}) => {
         className="number-of-events-input"
         value={number}
         onChange={handleInputChanged}
+        data-testid="numberOfEventsInput"
       />
     </div>
   );
