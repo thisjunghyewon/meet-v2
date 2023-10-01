@@ -74,19 +74,19 @@ test-driven development (TDD) technique. The application uses serverless to auth
 
 **Scenario 1:** When user hasn’t specified a number, 32 events are shown by default.
 
-- **Given** a user has not specified a number of events where they want to display
+- **Given** the user has not specified or filtered a number of events where they want to display
 
-- **When** the user chooses a city to see events in there
+- **When** the user chooses to display events in a specific city or all events
 
-- **Then** they will by default see 32 events displayed for that city.
+- **Then** the default number of displayed events will be 32
 
 **Scenario 2:** User can change the number of events they want to see
 
-- **Given** a user has searched for events in a city
+- **Given** the user has events displayed
 
 - **When** the user wants to specific number of events in that city
 
-- **Then** they can change the number of events they see displayed.
+- **Then** the number of events displayed will update to the number the user selected
 
 **- FEATURE 4: USE THE APP WHEN OFFLINE**
 

@@ -5,7 +5,9 @@ import { render } from "@testing-library/react";
 describe("<NumberOfEvents /> Component", () => {
   let NumberOfEventsComponent;
   beforeEach(() => {
-    NumberOfEventsComponent = render(<NumberOfEvents />);
+    NumberOfEventsComponent = render(
+      <NumberOfEvents setCurrentNOE={() => {}} />
+    );
   });
 
   test("has the input textbox", () => {
@@ -19,11 +21,11 @@ describe("<NumberOfEvents /> Component", () => {
   });
 
   test("updates number of events when user types", async () => {
+    const input = NumberOfEventsComponent.queryByRole("textbox");
     const user = userEvent.setup();
-    const numberTextBox = NumberOfEventsComponent.queryByRole("textbox");
-    await user.type(numberTextBox, "123");
+    await user.type(input, "{backspace}{backspace}10");
 
     // 32 (the default value already written) + 123
-    expect(numberTextBox).toHaveValue("32123");
+    expect(input).toHaveValue("10");
   });
 });
