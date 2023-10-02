@@ -60,11 +60,16 @@ export const getEvents = async () => {
       "https://hmq1hikj83.execute-api.eu-central-1.amazonaws.com/dev/api/get-events" +
       "/" +
       token;
-    const response = await fetch(url);
-    const result = await response.json();
-    if (result) {
-      return result.events;
-    } else return null;
+    try {
+      const response = await fetch(url);
+      const result = await response.json();
+      if (result) {
+        return result.events;
+      } else return null;
+    } catch (error) {
+      alert("failed to get events");
+      console.log(error);
+    }
   }
 };
 
