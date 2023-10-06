@@ -52,6 +52,11 @@ export const getEvents = async () => {
     return mockData;
   }
 
+  if (!navigator.onLine) {
+    const events = localStorage.getItem("lastEvents");
+    return events ? JSON.parse(events) : [];
+  }
+
   const token = await getAccessToken();
 
   if (token) {
@@ -64,6 +69,7 @@ export const getEvents = async () => {
       const response = await fetch(url);
       const result = await response.json();
       if (result) {
+        localStorage.setItem("lastEvents", JSON.stringify(result.events));
         return result.events;
       } else return null;
     } catch (error) {
