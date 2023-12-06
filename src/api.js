@@ -71,12 +71,18 @@ export const getEvents = async () => {
       if (result) {
         localStorage.setItem("lastEvents", JSON.stringify(result.events));
         return result.events;
-      } else return null;
+      } else {
+        // If result is falsy, return an empty array
+        return [];
+      }
     } catch (error) {
-      console.log(error);
-      return null;
+      console.error(error);
+      // If an error occurs, return an empty array
+      return [];
     }
   }
+  // If there is no token, return an empty array
+  return [];
 };
 
 const removeQuery = () => {

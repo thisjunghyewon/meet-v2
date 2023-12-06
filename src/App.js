@@ -20,16 +20,28 @@ const App = () => {
   const [errorAlert, setErrorAlert] = useState("");
   const [warningAlert, setWarningAlert] = useState("");
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const checkAccessToken = async () => {
+      const hasToken = await checkToken();
+      setHasAccessToken(hasToken);
+    };
+
+    checkAccessToken();
+  }, []);
 
   const fetchData = async () => {
-    const allEvents = await getEvents();
-    const filteredEvents =
-      currentCity === "See all cities"
-        ? allEvents
-        : allEvents.filter((event) => event.location === currentCity);
-    setEvents(filteredEvents.slice(0, currentNOE));
-    setAllLocations(extractLocations(allEvents));
+    try {
+      const allEvents = await getEvents();
+      const filteredEvents =
+        currentCity === "See all cities"
+          ? allEvents
+          : allEvents.filter((event) => event.location === currentCity);
+      setEvents(filteredEvents.slice(0, currentNOE));
+      setAllLocations(extractLocations(allEvents));
+    } catch (error) {
+      console.error(error);
+      setErrorAlert("Failed to fetch events. Please try again.");
+    }
   };
 
   useEffect(() => {
@@ -43,7 +55,7 @@ const App = () => {
         "You appear to be offline. Some events you see may not be up to date."
       );
     }
-    fetchData();
+    // fetchData 함수를 try-catch로 감싸 에러 핸들링
   }, [currentCity, currentNOE, hasAccessToken]);
 
   return (
