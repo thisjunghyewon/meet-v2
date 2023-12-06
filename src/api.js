@@ -128,3 +128,5 @@ const getToken = async (code) => {
     error.json();
   }
 };
+
+export { checkToken };
