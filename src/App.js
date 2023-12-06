@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import CitySearch from "./components/CitySearch";
 import EventList from "./components/EventList";
 import NumberOfEvents from "./components/NumberOfEvents";
-import { extractLocations, getEvents } from "./api";
+import { getEvents, extractLocations, checkToken } from "./api";
 import { InfoAlert, ErrorAlert, WarningAlert } from "./components/Alert";
 import CityEventsChart from "./components/CityEventsChart";
 import EventGenresChart from "./components/EventGenresChart";
+import WelcomeScreen from "./WelcomeScreen";
 
 import "./App.css";
 
 const App = () => {
+  const [hasAccessToken, setHasAccessToken] = useState(false);
   const [allLocations, setAllLocations] = useState([]);
   const [currentNOE, setCurrentNOE] = useState(32);
   const [events, setEvents] = useState([]);
@@ -17,6 +19,15 @@ const App = () => {
   const [infoAlert, setInfoAlert] = useState("");
   const [errorAlert, setErrorAlert] = useState("");
   const [warningAlert, setWarningAlert] = useState("");
+
+  useEffect(() => {
+    const checkAccessToken = async () => {
+      const hasToken = await checkToken();
+      setHasAccessToken(hasToken);
+    };
+
+    checkAccessToken();
+  }, []);
 
   const fetchData = async () => {
     const allEvents = await getEvents();
@@ -31,13 +42,16 @@ const App = () => {
   useEffect(() => {
     if (navigator.onLine) {
       setWarningAlert("");
+      if (hasAccessToken) {
+        fetchData();
+      }
     } else {
       setWarningAlert(
         "You appear to be offline. Some events you see may not be up to date."
       );
     }
     fetchData();
-  }, [currentCity, currentNOE]);
+  }, [currentCity, currentNOE, hasAccessToken]);
 
   return (
     <div className="App">
@@ -46,21 +60,27 @@ const App = () => {
         {errorAlert.length ? <ErrorAlert text={errorAlert} /> : null}
         {warningAlert.length ? <WarningAlert text={warningAlert} /> : null}
       </div>
-      <CitySearch
-        allLocations={allLocations}
-        setCurrentCity={setCurrentCity}
-        setInfoAlert={setInfoAlert}
-      />
-      <NumberOfEvents
-        setCurrentNOE={setCurrentNOE}
-        setErrorAlert={setErrorAlert}
-      />
+      {hasAccessToken ? (
+        <>
+          <CitySearch
+            allLocations={allLocations}
+            setCurrentCity={setCurrentCity}
+            setInfoAlert={setInfoAlert}
+          />
+          <NumberOfEvents
+            setCurrentNOE={setCurrentNOE}
+            setErrorAlert={setErrorAlert}
+          />
 
-      <div className="charts-container">
-        <EventGenresChart events={events} />
-        <CityEventsChart allLocations={allLocations} events={events} />
-      </div>
-      <EventList events={events} />
+          <div className="charts-container">
+            <EventGenresChart events={events} />
+            <CityEventsChart allLocations={allLocations} events={events} />
+          </div>
+          <EventList events={events} />
+        </>
+      ) : (
+        <WelcomeScreen setHasAccessToken={setHasAccessToken} />
+      )}
     </div>
   );
 };

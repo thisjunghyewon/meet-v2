@@ -1,0 +1,9 @@
+.WelcomeScreen {
+  margin: auto;
+}
+
+.card-footer {
+  background-color: rgba(0, 0, 0, 0) !important;
+  margin: 0px auto !important;
+  padding: 1.25rem 1.25rem !important;
+}
