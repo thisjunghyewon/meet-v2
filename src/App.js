@@ -66,7 +66,10 @@ const App = () => {
         {warningAlert.length ? <WarningAlert text={warningAlert} /> : null}
       </div>
       {!hasAccessToken ? (
-        <WelcomeScreen setHasAccessToken={setHasAccessToken} />
+        <WelcomeScreen
+          setHasAccessToken={setHasAccessToken}
+          showWelcomeScreen={true}
+        />
       ) : (
         <>
           <CitySearch
