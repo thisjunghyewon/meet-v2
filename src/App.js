@@ -20,14 +20,7 @@ const App = () => {
   const [errorAlert, setErrorAlert] = useState("");
   const [warningAlert, setWarningAlert] = useState("");
 
-  useEffect(() => {
-    const checkAccessToken = async () => {
-      const hasToken = await checkToken();
-      setHasAccessToken(hasToken);
-    };
-
-    checkAccessToken();
-  }, []);
+  useEffect(() => {}, []);
 
   const fetchData = async () => {
     const allEvents = await getEvents();
