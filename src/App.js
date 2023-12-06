@@ -53,7 +53,9 @@ const App = () => {
         {errorAlert.length ? <ErrorAlert text={errorAlert} /> : null}
         {warningAlert.length ? <WarningAlert text={warningAlert} /> : null}
       </div>
-      {hasAccessToken ? (
+      {!hasAccessToken ? (
+        <WelcomeScreen setHasAccessToken={setHasAccessToken} />
+      ) : (
         <>
           <CitySearch
             allLocations={allLocations}
@@ -71,8 +73,6 @@ const App = () => {
           </div>
           <EventList events={events} />
         </>
-      ) : (
-        <WelcomeScreen setHasAccessToken={setHasAccessToken} />
       )}
     </div>
   );

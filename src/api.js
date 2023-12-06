@@ -73,8 +73,8 @@ export const getEvents = async () => {
         return result.events;
       } else return null;
     } catch (error) {
-      alert("failed to get events");
       console.log(error);
+      return null;
     }
   }
 };
