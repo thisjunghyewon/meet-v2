@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import WelcomeScreen from "./WelcomeScreen";
 import CitySearch from "./components/CitySearch";
 import EventList from "./components/EventList";
 import NumberOfEvents from "./components/NumberOfEvents";
@@ -6,11 +7,9 @@ import { getEvents, extractLocations, checkToken } from "./api";
 import { InfoAlert, ErrorAlert, WarningAlert } from "./components/Alert";
 import CityEventsChart from "./components/CityEventsChart";
 import EventGenresChart from "./components/EventGenresChart";
-import WelcomeScreen from "./WelcomeScreen";
-
-import "./App.css";
 
 const App = () => {
+  const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   const [hasAccessToken, setHasAccessToken] = useState(false);
   const [allLocations, setAllLocations] = useState([]);
   const [currentNOE, setCurrentNOE] = useState(32);
@@ -39,6 +38,7 @@ const App = () => {
     const checkAccessToken = async () => {
       const hasToken = await checkToken();
       setHasAccessToken(hasToken);
+      setShowWelcomeScreen(!hasToken); // Update showWelcomeScreen based on hasToken
     };
 
     checkAccessToken();
@@ -55,22 +55,22 @@ const App = () => {
         "You appear to be offline. Some events you see may not be up to date."
       );
     }
-    // fetchData 함수를 try-catch로 감싸 에러 핸들링
   }, [currentCity, currentNOE, hasAccessToken, fetchData]);
 
   return (
     <div className="App">
+      {showWelcomeScreen && (
+        <WelcomeScreen
+          setHasAccessToken={setHasAccessToken}
+          setShowWelcomeScreen={setShowWelcomeScreen}
+        />
+      )}
       <div className="alerts-container">
         {infoAlert.length ? <InfoAlert text={infoAlert} /> : null}
         {errorAlert.length ? <ErrorAlert text={errorAlert} /> : null}
         {warningAlert.length ? <WarningAlert text={warningAlert} /> : null}
       </div>
-      {!hasAccessToken ? (
-        <WelcomeScreen
-          setHasAccessToken={setHasAccessToken}
-          showWelcomeScreen={true}
-        />
-      ) : (
+      {!showWelcomeScreen && (
         <>
           <CitySearch
             allLocations={allLocations}
