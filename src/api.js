@@ -1,5 +1,3 @@
-// api.js
-
 import mockData from "./mock-data";
 
 export const extractLocations = (events) => {
