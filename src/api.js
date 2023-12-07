@@ -1,13 +1,7 @@
+// api.js
+
 import mockData from "./mock-data";
 
-/**
- *
- * @param {*} events:
- * The following function should be in the “api.js” file.
- * This function takes an events array, then uses map to create a new array with only locations.
- * It will also remove all duplicates by creating another new array using the spread operator and spreading a Set.
- * The Set will remove all duplicates from the array.
- */
 export const extractLocations = (events) => {
   const extractedLocations = events.map((event) => event.location);
   const locations = [...new Set(extractedLocations)];
@@ -18,18 +12,22 @@ export const getAccessToken = async () => {
   const accessToken = localStorage.getItem("access_token");
   const tokenCheck = accessToken && (await checkToken(accessToken));
 
-  if (!accessToken || tokenCheck.error) {
-    await localStorage.removeItem("access_token");
-    const searchParams = new URLSearchParams(window.location.search);
-    const code = await searchParams.get("code");
-    if (!accessToken && !code) {
-      // 사용자가 로그인하지 않은 경우 WelcomeScreen으로 리다이렉션
-      window.location.href = "./WelcomeScreen.jsx";
-      return;
-    }
-    return code && getToken(code);
+  // Check if the user is already logged in
+  if (accessToken && !tokenCheck.error) {
+    return accessToken;
   }
-  return accessToken;
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const code = searchParams.get("code");
+
+  // If the user is not logged in and doesn't have an authentication code, redirect to WelcomeScreen
+  if (!accessToken && !code) {
+    window.location.href = "./WelcomeScreen.jsx";
+    return;
+  }
+
+  // If the user has an authentication code, get the token
+  return code && getToken(code);
 };
 
 const checkToken = async (accessToken) => {
@@ -40,10 +38,6 @@ const checkToken = async (accessToken) => {
   return result;
 };
 
-/**
- *
- * This function will fetch the list of all events
- */
 export const getEvents = async () => {
   if (window.location.href.startsWith("http://localhost")) {
     return mockData;
@@ -96,21 +90,6 @@ const removeQuery = () => {
     window.history.pushState("", "", newurl);
   }
 };
-
-// getToken without try...catch
-
-// const getToken = async (code) => {
-//   const encodeCode = encodeURIComponent(code);
-//   const response = await fetch(
-//     'YOUR_GET_ACCESS_TOKEN_ENDPOINT' + '/' + encodeCode
-//   );
-//   const { access_token } = await response.json();
-//   access_token && localStorage.setItem("access_token", access_token);
-
-//   return access_token;
-// };
-
-// getToken with try...catch
 
 const getToken = async (code) => {
   try {

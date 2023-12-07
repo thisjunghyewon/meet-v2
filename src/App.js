@@ -1,3 +1,5 @@
+// App.js
+
 import React, { useEffect, useState } from "react";
 import CitySearch from "./components/CitySearch";
 import EventList from "./components/EventList";
@@ -19,11 +21,17 @@ const App = () => {
   const [infoAlert, setInfoAlert] = useState("");
   const [errorAlert, setErrorAlert] = useState("");
   const [warningAlert, setWarningAlert] = useState("");
+  const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
 
   useEffect(() => {
     const checkAccessToken = async () => {
       const hasToken = await checkToken();
       setHasAccessToken(hasToken);
+
+      // If the user has the token, don't show the WelcomeScreen
+      if (hasToken) {
+        setShowWelcomeScreen(false);
+      }
     };
 
     checkAccessToken();
@@ -65,10 +73,10 @@ const App = () => {
         {errorAlert.length ? <ErrorAlert text={errorAlert} /> : null}
         {warningAlert.length ? <WarningAlert text={warningAlert} /> : null}
       </div>
-      {!hasAccessToken ? (
+      {showWelcomeScreen ? (
         <WelcomeScreen
           setHasAccessToken={setHasAccessToken}
-          showWelcomeScreen={true}
+          setShowWelcomeScreen={setShowWelcomeScreen}
         />
       ) : (
         <>
