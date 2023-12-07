@@ -23,6 +23,7 @@ export const getAccessToken = async () => {
     const searchParams = new URLSearchParams(window.location.search);
     const code = await searchParams.get("code");
     if (!accessToken && !code) {
+      // 사용자가 로그인하지 않은 경우 WelcomeScreen으로 리다이렉션
       window.location.href = "./WelcomeScreen.jsx";
       return;
     }

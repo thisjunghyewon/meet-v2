@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CitySearch from "./components/CitySearch";
 import EventList from "./components/EventList";
 import NumberOfEvents from "./components/NumberOfEvents";
@@ -24,9 +24,6 @@ const App = () => {
     const checkAccessToken = async () => {
       const hasToken = await checkToken();
       setHasAccessToken(hasToken);
-      if (!hasToken) {
-        setHasAccessToken(false);
-      }
     };
 
     checkAccessToken();
