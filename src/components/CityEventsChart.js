@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   ScatterChart,
   Scatter,
@@ -12,7 +12,7 @@ import {
 const CityEventsChart = ({ allLocations, events }) => {
   const [data, setData] = useState([]);
 
-  const getData = () => {
+  const getData = useCallback(() => {
     const newData = allLocations.map((location) => {
       const count = events.filter(
         (event) => event.location === location
@@ -21,11 +21,11 @@ const CityEventsChart = ({ allLocations, events }) => {
       return { city, count };
     });
     setData(newData);
-  };
+  }, [allLocations, events]);
 
   useEffect(() => {
     getData();
-  }, [allLocations, events]); // allLocations와 events를 의존성 배열에 추가
+  }, [getData]); // Include getData in the dependency array
 
   return (
     <ResponsiveContainer width="99%" height={400}>

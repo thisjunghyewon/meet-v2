@@ -1,6 +1,4 @@
-// App.js
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import CitySearch from "./components/CitySearch";
 import EventList from "./components/EventList";
 import NumberOfEvents from "./components/NumberOfEvents";
@@ -21,23 +19,8 @@ const App = () => {
   const [infoAlert, setInfoAlert] = useState("");
   const [errorAlert, setErrorAlert] = useState("");
   const [warningAlert, setWarningAlert] = useState("");
-  const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
 
-  useEffect(() => {
-    const checkAccessToken = async () => {
-      const hasToken = await checkToken();
-      setHasAccessToken(hasToken);
-
-      // If the user has the token, don't show the WelcomeScreen
-      if (hasToken) {
-        setShowWelcomeScreen(false);
-      }
-    };
-
-    checkAccessToken();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const allEvents = await getEvents();
       const filteredEvents =
@@ -50,7 +33,16 @@ const App = () => {
       console.error(error);
       setErrorAlert("Failed to fetch events. Please try again.");
     }
-  };
+  }, [currentCity, currentNOE]);
+
+  useEffect(() => {
+    const checkAccessToken = async () => {
+      const hasToken = await checkToken();
+      setHasAccessToken(hasToken);
+    };
+
+    checkAccessToken();
+  }, []);
 
   useEffect(() => {
     if (navigator.onLine) {
@@ -73,10 +65,10 @@ const App = () => {
         {errorAlert.length ? <ErrorAlert text={errorAlert} /> : null}
         {warningAlert.length ? <WarningAlert text={warningAlert} /> : null}
       </div>
-      {showWelcomeScreen ? (
+      {!hasAccessToken ? (
         <WelcomeScreen
           setHasAccessToken={setHasAccessToken}
-          setShowWelcomeScreen={setShowWelcomeScreen}
+          showWelcomeScreen={true}
         />
       ) : (
         <>

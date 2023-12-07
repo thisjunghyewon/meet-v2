@@ -1,9 +1,14 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { PieChart, Pie, ResponsiveContainer } from "recharts";
 
 const EventGenresChart = ({ events }) => {
+  // Wrap the initialization of genres in useMemo
+  const genres = useMemo(
+    () => ["React", "JavaScript", "Node", "jQuery", "Angular"],
+    []
+  );
+
   const [data, setData] = useState([]);
-  const genres = ["React", "JavaScript", "Node", "jQuery", "Angular"];
 
   const renderCustomizedLabel = ({
     cx,
@@ -30,7 +35,7 @@ const EventGenresChart = ({ events }) => {
     ) : null;
   };
 
-  const getData = () => {
+  const getData = useCallback(() => {
     const data = genres.map((genre) => {
       const filteredEvents = events.filter((event) =>
         event.summary.includes(genre)
@@ -41,11 +46,11 @@ const EventGenresChart = ({ events }) => {
       };
     });
     return data;
-  };
+  }, [events, genres]); // Include events and genres in the dependency array
 
   useEffect(() => {
     setData(getData());
-  }, [events]); // events를 직접 사용
+  }, [getData]); // Include getData in the dependency array
 
   return (
     <ResponsiveContainer width="99%" height={400}>
