@@ -64,7 +64,7 @@ const App = () => {
       );
     }
     // fetchData 함수를 try-catch로 감싸 에러 핸들링
-  }, [currentCity, currentNOE, hasAccessToken]);
+  }, [currentCity, currentNOE, hasAccessToken, fetchData]);
 
   return (
     <div className="App">

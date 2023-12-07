@@ -7,7 +7,7 @@ const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
 
   useEffect(() => {
     setSuggestions(allLocations);
-  }, [`${allLocations}`]);
+  }, [allLocations]); // allLocations를 직접 사용
 
   const handleInputChanged = (event) => {
     const value = event.target.value;
