@@ -16,8 +16,7 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
-// 서비스 워커 등록 주석 처리
-// serviceWorkerRegistration.register();
+serviceWorkerRegistration.register();
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
