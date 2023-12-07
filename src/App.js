@@ -1,9 +1,11 @@
+// App.js
+
 import React, { useEffect, useState, useCallback } from "react";
 import WelcomeScreen from "./WelcomeScreen";
 import CitySearch from "./components/CitySearch";
 import EventList from "./components/EventList";
 import NumberOfEvents from "./components/NumberOfEvents";
-import { getEvents, extractLocations, checkToken } from "./api";
+import { getEvents, extractLocations, checkToken, getAccessToken } from "./api";
 import { InfoAlert, ErrorAlert, WarningAlert } from "./components/Alert";
 import CityEventsChart from "./components/CityEventsChart";
 import EventGenresChart from "./components/EventGenresChart";
@@ -34,11 +36,15 @@ const App = () => {
     }
   }, [currentCity, currentNOE]);
 
+  const handleGoogleLogin = async () => {
+    await getAccessToken(); // Call the function to initiate Google login
+  };
+
   useEffect(() => {
     const checkAccessToken = async () => {
       const hasToken = await checkToken();
       setHasAccessToken(hasToken);
-      setShowWelcomeScreen(!hasToken); // Update showWelcomeScreen based on hasToken
+      setShowWelcomeScreen(!hasToken);
     };
 
     checkAccessToken();
@@ -63,6 +69,7 @@ const App = () => {
         <WelcomeScreen
           setHasAccessToken={setHasAccessToken}
           setShowWelcomeScreen={setShowWelcomeScreen}
+          handleGoogleLogin={handleGoogleLogin}
         />
       )}
       <div className="alerts-container">
