@@ -24,6 +24,9 @@ const App = () => {
     const checkAccessToken = async () => {
       const hasToken = await checkToken();
       setHasAccessToken(hasToken);
+      if (!hasToken) {
+        setHasAccessToken(false);
+      }
     };
 
     checkAccessToken();

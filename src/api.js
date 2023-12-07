@@ -22,13 +22,9 @@ export const getAccessToken = async () => {
     await localStorage.removeItem("access_token");
     const searchParams = new URLSearchParams(window.location.search);
     const code = await searchParams.get("code");
-    if (!code) {
-      const response = await fetch(
-        "https://hmq1hikj83.execute-api.eu-central-1.amazonaws.com/dev/api/get-auth-url"
-      );
-      const result = await response.json();
-      const { authUrl } = result;
-      return (window.location.href = authUrl);
+    if (!accessToken && !code) {
+      window.location.href = "./WelcomeScreen.jsx";
+      return;
     }
     return code && getToken(code);
   }
