@@ -46,6 +46,8 @@ const getToken = async (code) => {
 export const getAccessToken = async () => {
   const accessToken = localStorage.getItem("access_token");
 
+  console.log("Access Token:", accessToken);
+
   if (accessToken) {
     const tokenCheck = await checkToken(accessToken);
     if (!tokenCheck.error) {
