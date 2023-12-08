@@ -65,11 +65,17 @@ export const getAccessToken = async () => {
         "https://hmq1hikj83.execute-api.eu-central-1.amazonaws.com/dev/api/get-auth-url"
       );
       const { authUrl } = await response.json();
-      window.location.href = authUrl;
+      // 로그인이 필요한 경우 Promise를 반환하여 대기하도록 변경
+      return new Promise((resolve, reject) => {
+        // 로그인 페이지로 이동
+        window.location.href = authUrl;
+
+        // 이 부분에서 resolve 또는 reject를 호출하여 Promise를 해결하거나 거부할 수 있음
+        // 예: 로그인 완료 후 resolve 또는 로그인 실패 후 reject 호출
+      });
     } catch (error) {
       console.error("Error fetching authentication URL:", error);
     }
-    return;
   }
 
   // If there is an authentication code, get the token
