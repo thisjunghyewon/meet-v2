@@ -1,6 +1,5 @@
-// App.js
-
 import React, { useEffect, useState, useCallback } from "react";
+import "./App.css";
 import WelcomeScreen from "./WelcomeScreen";
 import CitySearch from "./components/CitySearch";
 import EventList from "./components/EventList";
@@ -44,7 +43,15 @@ const App = () => {
     const checkAccessToken = async () => {
       const hasToken = await checkToken();
       setHasAccessToken(hasToken);
-      setShowWelcomeScreen(!hasToken);
+      setShowWelcomeScreen(!hasToken); // Update showWelcomeScreen based on hasToken
+
+      // If the user is already logged in, hide WelcomeScreen
+      if (hasToken) {
+        const welcomeScreen = document.querySelector(".WelcomeScreen");
+        if (welcomeScreen) {
+          welcomeScreen.style.display = "none";
+        }
+      }
     };
 
     checkAccessToken();

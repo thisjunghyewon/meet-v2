@@ -1,6 +1,13 @@
+// CitySearch.js
+
 import { useState, useEffect } from "react";
 
-const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
+const CitySearch = ({
+  allLocations,
+  setCurrentCity,
+  setInfoAlert,
+  showWelcomeScreen,
+}) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -9,7 +16,14 @@ const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
     setSuggestions(allLocations);
   }, [allLocations]); // allLocations를 직접 사용
 
+  // 구글 로그인이 완료되었고 WelcomeScreen이 감춰진 경우에만 검색 기능 활성화
+  const isSearchEnabled = !showWelcomeScreen;
+
   const handleInputChanged = (event) => {
+    if (!isSearchEnabled) {
+      return;
+    }
+
     const value = event.target.value;
     const filteredLocations = allLocations
       ? allLocations.filter((location) => {
@@ -31,6 +45,10 @@ const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
   };
 
   const handleItemClicked = (event) => {
+    if (!isSearchEnabled) {
+      return;
+    }
+
     const value = event.target.textContent;
     setQuery(value);
     setShowSuggestions(false); // to hide the list
@@ -45,10 +63,10 @@ const CitySearch = ({ allLocations, setCurrentCity, setInfoAlert }) => {
         className="city"
         placeholder="Search for a city"
         value={query}
-        onFocus={() => setShowSuggestions(true)}
+        onFocus={() => setShowSuggestions(isSearchEnabled)}
         onChange={handleInputChanged}
       />
-      {showSuggestions ? (
+      {showSuggestions && isSearchEnabled ? (
         <ul className="suggestions">
           {suggestions.map((suggestion) => {
             return (

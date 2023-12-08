@@ -1,14 +1,9 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { PieChart, Pie, ResponsiveContainer } from "recharts";
+import React, { useState, useEffect } from "react";
+import { PieChart, Pie, ResponsiveContainer, Cell } from "recharts";
 
 const EventGenresChart = ({ events }) => {
-  // Wrap the initialization of genres in useMemo
-  const genres = useMemo(
-    () => ["React", "JavaScript", "Node", "jQuery", "Angular"],
-    []
-  );
-
   const [data, setData] = useState([]);
+  const genres = ["React", "JavaScript", "Node", "jQuery", "Angular"];
 
   const renderCustomizedLabel = ({
     cx,
@@ -35,7 +30,7 @@ const EventGenresChart = ({ events }) => {
     ) : null;
   };
 
-  const getData = useCallback(() => {
+  const getData = () => {
     const data = genres.map((genre) => {
       const filteredEvents = events.filter((event) =>
         event.summary.includes(genre)
@@ -46,11 +41,13 @@ const EventGenresChart = ({ events }) => {
       };
     });
     return data;
-  }, [events, genres]); // Include events and genres in the dependency array
+  };
 
   useEffect(() => {
     setData(getData());
-  }, [getData]); // Include getData in the dependency array
+  }, [events]);
+
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   return (
     <ResponsiveContainer width="99%" height={400}>
@@ -62,7 +59,11 @@ const EventGenresChart = ({ events }) => {
           labelLine={false}
           label={renderCustomizedLabel}
           outerRadius={130}
-        />
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Pie>
       </PieChart>
     </ResponsiveContainer>
   );

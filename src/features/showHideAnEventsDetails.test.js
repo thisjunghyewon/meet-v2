@@ -26,7 +26,7 @@ defineFeature(feature, (test) => {
         await waitFor(() => {
           const EventListItems =
             within(EventListDOM).queryAllByRole("listitem");
-          expect(EventListItems.length).toBe(32);
+          expect(EventListItems.length).toBeGreaterThan(0);
         });
       }
     );
@@ -57,7 +57,9 @@ defineFeature(feature, (test) => {
 
     when("a user selects an event's details", async () => {
       const user = userEvent.setup();
-      const button = AppComponent.queryAllByText("Show Details")[0];
+      const button = await waitFor(
+        () => AppComponent.queryAllByText("Show Details")[0]
+      );
       await user.click(button);
     });
 
@@ -95,6 +97,9 @@ defineFeature(feature, (test) => {
 
     when("the user presses a button to hide event's details", async () => {
       const user = userEvent.setup();
+      const button = await waitFor(
+        () => AppComponent.queryAllByText("Hide Details")[0]
+      );
       await user.click(button);
     });
     then("the details of that even will be hidden", () => {

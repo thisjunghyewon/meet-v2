@@ -6,12 +6,7 @@ import { Container, Col, Card } from "react-bootstrap";
 import GoogleButton from "react-google-button";
 
 function WelcomeScreen(props) {
-  const handleGoogleLogin = () => {
-    // Call the function to initiate Google login
-    props.getAccessToken();
-  };
-
-  return (
+  return props.showWelcomeScreen ? (
     <Container>
       <Col lg={4} md={8} className="mx-auto">
         <Card className="WelcomeScreen text-center mt-5">
@@ -24,10 +19,11 @@ function WelcomeScreen(props) {
               developers
             </p>
             <Card.Footer>
-              {/* Call the function to handle Google login onClick */}
               <GoogleButton
                 className="mx-auto mt-2"
-                onClick={handleGoogleLogin}
+                onClick={() => {
+                  props.getAccessToken();
+                }}
               />
             </Card.Footer>
             <div className="privacy">
@@ -43,7 +39,7 @@ function WelcomeScreen(props) {
         </Card>
       </Col>
     </Container>
-  );
+  ) : null;
 }
 
 export default WelcomeScreen;
