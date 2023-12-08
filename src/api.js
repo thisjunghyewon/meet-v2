@@ -45,34 +45,33 @@ const getToken = async (code) => {
 
 export const getAccessToken = async () => {
   const accessToken = localStorage.getItem("access_token");
-  const tokenCheck = accessToken && (await checkToken(accessToken));
 
-  // If the user is not logged in and doesn't have an authentication code, redirect to WelcomeScreen
-  if (!accessToken || !tokenCheck.error) {
-    localStorage.removeItem("access_token");
-
-    const searchParams = new URLSearchParams(window.location.search);
-    const code = searchParams.get("code");
-
-    if (!code) {
-      // If there is no authentication code, redirect to the authentication URL
-      try {
-        const response = await fetch(
-          "https://hmq1hikj83.execute-api.eu-central-1.amazonaws.com/dev/api/get-auth-url"
-        );
-        const { authUrl } = await response.json();
-        window.location.href = authUrl;
-      } catch (error) {
-        console.error("Error fetching authentication URL:", error);
-      }
-      return;
+  if (accessToken) {
+    const tokenCheck = await checkToken(accessToken);
+    if (!tokenCheck.error) {
+      return accessToken;
     }
-    // If there is an authentication code, get the token
-    return code && getToken(code);
-  } else {
-    // If the user is already logged in, return the access token
-    return accessToken;
   }
+
+  // If there is no access token or it's invalid, initiate the login process
+  const searchParams = new URLSearchParams(window.location.search);
+  const code = searchParams.get("code");
+
+  if (!code) {
+    try {
+      const response = await fetch(
+        "https://hmq1hikj83.execute-api.eu-central-1.amazonaws.com/dev/api/get-auth-url"
+      );
+      const { authUrl } = await response.json();
+      window.location.href = authUrl;
+    } catch (error) {
+      console.error("Error fetching authentication URL:", error);
+    }
+    return;
+  }
+
+  // If there is an authentication code, get the token
+  return code && getToken(code);
 };
 
 export const getEvents = async () => {

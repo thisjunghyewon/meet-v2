@@ -43,19 +43,20 @@ const App = () => {
     const checkAccessToken = async () => {
       const hasToken = await checkToken();
       setHasAccessToken(hasToken);
-      setShowWelcomeScreen(!hasToken); // Update showWelcomeScreen based on hasToken
 
-      // If the user is already logged in, hide WelcomeScreen
+      if (!hasToken) {
+        // 사용자가 로그인하지 않은 상태에서만 WelcomeScreen을 보여줌
+        setShowWelcomeScreen(true);
+      }
+
       if (hasToken) {
-        const welcomeScreen = document.querySelector(".WelcomeScreen");
-        if (welcomeScreen) {
-          welcomeScreen.style.display = "none";
-        }
+        // 사용자가 이미 로그인한 상태라면 fetchData를 호출하여 이벤트를 가져옴
+        fetchData();
       }
     };
 
     checkAccessToken();
-  }, []);
+  }, [fetchData]);
 
   useEffect(() => {
     if (navigator.onLine) {

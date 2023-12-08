@@ -1,3 +1,5 @@
+// handler.js
+
 "use strict";
 
 const { google } = require("googleapis");
@@ -15,11 +17,6 @@ const oAuth2Client = new google.auth.OAuth2(
 );
 
 module.exports.getAuthURL = async () => {
-  /**
-   *
-   * Scopes array is passed to the `scope` option.
-   *
-   */
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     scope: SCOPES,
@@ -42,11 +39,6 @@ module.exports.getAccessToken = async (event) => {
   const code = decodeURIComponent(`${event.pathParameters.code}`);
 
   return new Promise((resolve, reject) => {
-    /**
-     *  Exchange authorization code for access token with a “callback” after the exchange,
-     *  The callback in this case is an arrow function with the results as parameters: “error” and “response”
-     */
-
     oAuth2Client.getToken(code, (error, response) => {
       if (error) {
         return reject(error);
@@ -75,60 +67,66 @@ module.exports.getAccessToken = async (event) => {
 };
 
 module.exports.getCalendarEvents = async (event) => {
-  // const oAuth2Client = new google.auth.OAuth2(
-  //   CLIENT_ID,
-  //   CLIENT_SECRET,
-  //   redirect_uris[0]
-  // );
-
+  // Decode access token extracted from the URL query
   const access_token = decodeURIComponent(
     `${event.pathParameters.access_token}`
   );
 
-  oAuth2Client.setCredentials({ access_token });
+  // Set credentials only if access_token is available
+  if (access_token) {
+    oAuth2Client.setCredentials({ access_token });
 
-  return new Promise((resolve, reject) => {
-    /*Access calendar data from google
-     */
-
-    calendar.events.list(
-      {
-        calendarId: CALENDAR_ID,
-        auth: oAuth2Client,
-        timeMin: new Date().toISOString(),
-        singleEvents: true,
-        orderBy: "startTime",
-      },
-      //callback to get the error and response
-      (error, response) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(response);
+    return new Promise((resolve, reject) => {
+      // Access calendar data from Google
+      calendar.events.list(
+        {
+          calendarId: CALENDAR_ID,
+          auth: oAuth2Client,
+          timeMin: new Date().toISOString(),
+          singleEvents: true,
+          orderBy: "startTime",
+        },
+        // Callback to get the error and response
+        (error, response) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(response);
+          }
         }
-      }
-    );
-  })
-    .then((results) => {
-      // Respond with OAuth token
-      return {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": true,
-        },
-        body: JSON.stringify({ events: results.data.items }),
-      };
+      );
     })
-    .catch((error) => {
-      // Handle error
-      return {
-        statusCode: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Credentials": true,
-        },
-        body: JSON.stringify(error),
-      };
-    });
+      .then((results) => {
+        // Respond with OAuth token
+        return {
+          statusCode: 200,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": true,
+          },
+          body: JSON.stringify({ events: results.data.items }),
+        };
+      })
+      .catch((error) => {
+        // Handle error
+        return {
+          statusCode: 500,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Credentials": true,
+          },
+          body: JSON.stringify(error),
+        };
+      });
+  } else {
+    // Access token is not available, return an error response
+    return {
+      statusCode: 401,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Credentials": true,
+      },
+      body: JSON.stringify({ error: "Unauthorized" }),
+    };
+  }
 };
